@@ -1,10 +1,11 @@
 import express from 'express'
 import authRoutes from "./routes/auth.route.js"
-import postRoute from './routes/post.route.js'
+import postRoutes from './routes/post.route.js'
 import dotenv from 'dotenv'
 import connectToDb from './db/dbconnection.js'
 import cookieParser from 'cookie-parser'
 import userRoutes from './routes/user.route.js'
+import notificationRoutes from './routes/notification.route.js'
 import { v2 as cloudinary } from "cloudinary";
 
 const app = express()
@@ -24,7 +25,8 @@ app.use(cookieParser())
 
 app.use("/api/auth", authRoutes)
 app.use("/api/users", userRoutes)
-app.use("/api/posts", postRoute)
+app.use("/api/posts", postRoutes)
+app.use("/api/notifications", notificationRoutes)
 
 const port = process.env.PORT
 
