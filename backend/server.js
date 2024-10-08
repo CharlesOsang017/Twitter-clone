@@ -1,10 +1,10 @@
 import express from 'express'
-import authRoutes from "./routes/auth.routes.js"
+import authRoutes from "./routes/auth.route.js"
 import postRoute from './routes/post.route.js'
 import dotenv from 'dotenv'
 import connectToDb from './db/dbconnection.js'
 import cookieParser from 'cookie-parser'
-import userRoutes from './routes/user.routes.js'
+import userRoutes from './routes/user.route.js'
 import { v2 as cloudinary } from "cloudinary";
 
 const app = express()
