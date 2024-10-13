@@ -101,7 +101,7 @@ export const commentOnPost = async (req, res) => {
 export const likeUnlikePost = async (req, res) => {
   try {
     const userId = req.user._id;
-    const postId = req.params.id; // No need to destructure `id`, just use `req.params.id`
+    const postId = req.params.id; // Use req.params.id directly
 
     const post = await Post.findById(postId);
     if (!post) {
@@ -109,33 +109,47 @@ export const likeUnlikePost = async (req, res) => {
     }
 
     const userLikedPost = post.likes.includes(userId);
+
     if (userLikedPost) {
       // Unlike the post
       await Post.updateOne({ _id: postId }, { $pull: { likes: userId } });
       await User.updateOne({ _id: userId }, { $pull: { likedPosts: postId } });
-      return res.status(200).json({ message: "Post unliked successfully!" });
+
+      const updatedPost = await Post.findById(postId); // Refetch to get the updated likes
+      return res.status(200).json(updatedPost.likes);
     } else {
       // Like the post
       post.likes.push(userId);
       await User.updateOne({ _id: userId }, { $push: { likedPosts: postId } });
       await post.save();
 
-      // Create a like notification
-      const notification = new Notification({
+      // Check if a similar notification already exists
+      const existingNotification = await Notification.findOne({
         from: userId,
         to: post.user,
         type: "like",
-        post: postId, // You may want to store the postId in the notification
+        post: postId,
       });
-      await notification.save();
 
-      return res.status(200).json({ message: "Post liked successfully!" });
+      if (!existingNotification) {
+        // Create a like notification
+        const notification = new Notification({
+          from: userId,
+          to: post.user,
+          type: "like",
+          post: postId,
+        });
+        await notification.save();
+      }
+
+      return res.status(200).json(post.likes);
     }
   } catch (error) {
     console.log("Error in likeUnlikePost controller:", error.message);
     return res.status(500).json({ error: "Internal server error" });
   }
 };
+
 
 export const getAllPosts = async (req, res) => {
   try {
