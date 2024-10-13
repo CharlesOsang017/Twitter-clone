@@ -7,7 +7,7 @@ import cookieParser from 'cookie-parser'
 import userRoutes from './routes/user.route.js'
 import notificationRoutes from './routes/notification.route.js'
 import { v2 as cloudinary } from "cloudinary";
-
+import cors from "cors"
 const app = express()
 
 dotenv.config()
@@ -19,6 +19,7 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET, // Your Cloudinary API secret
   });
 // middleware
+app.use(cors())
 app.use(express.json()) // to pass req.body
 app.use(express.urlencoded({extended: true})) // to parse form data(urlencoded)
 app.use(cookieParser())
