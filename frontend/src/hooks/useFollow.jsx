@@ -24,7 +24,7 @@ const useFollow = () => {
         // Awaiting invalidation ensures they are complete before continuing
         await Promise.all([
           queryClient.invalidateQueries({ queryKey: ["suggestedUsers"] }),
-          queryClient.invalidateQueries({ queryKey: ["authUsers"] }),
+          queryClient.invalidateQueries({ queryKey: ["authUser"] }),
         ]);
       } catch (invalidateError) {
         console.error("Error invalidating queries: ", invalidateError);
