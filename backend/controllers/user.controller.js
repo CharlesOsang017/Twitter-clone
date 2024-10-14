@@ -10,7 +10,7 @@ export const getUserProfile = async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: "user not found" });
     }
-    return res.status(200).json({ user });
+    return res.status(200).json(user);
   } catch (error) {
     console.log("error in getUser Profile controller", error.message);
     return res.status(500).json({ error: "internal server error" });
