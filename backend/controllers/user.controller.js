@@ -105,7 +105,7 @@ export const updateUserProfile = async (req, res) => {
         if (!isMatch)
           return res
             .status(400)
-            .json({ message: "Current password is incorrect" });
+            .json({ error: "Current password is incorrect" });
         if (newPassword.length < 6)
           return res
             .status(400)

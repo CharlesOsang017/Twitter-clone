@@ -16,6 +16,7 @@ import { formatMemberSinceDate } from "../../utils/date";
 import useFollow from "../../hooks/useFollow";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import toast from 'react-hot-toast'
+import useProfileUpdate from "../../hooks/useProfileUpdate";
 
 const ProfilePage = () => {
 	const [coverImg, setCoverImg] = useState(null);
@@ -54,32 +55,8 @@ const ProfilePage = () => {
 	const isMyProfile = authUser?._id === user?._id;
 	const following = authUser?.following.includes(user?._id) 
 
-	const {mutate: updateProfile, isPending:isUpdatingProfile} = useMutation({
-		mutationFn: async()=>{
-			try {
-				const res = await fetch(`/api/users/update`, {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json"
-					},
-					body: JSON.stringify({coverImg, profileImg})
-				})
-				const data = await res.json()
-				if(!res.ok){
-					throw new Error(data.error || "something went wrong")
-				}
-			} catch (error) {
-				throw new Error(error.message)
-			}
-		},
-		onSuccess: async ()=>{
-			toast.success('profile updated successfully')
-			Promise.all([
-				queryClient.invalidateQueries({queryKey: ['userProfile']}),
-				queryClient.invalidateQueries({queryKey: ['authUser']})
-			])
-		}
-	})
+	const {updateProfile, isUpdatingProfile} = useProfileUpdate()
+
 
 
 
@@ -174,7 +151,11 @@ const ProfilePage = () => {
 								{(coverImg || profileImg) && (
 									<button
 										className='btn btn-primary rounded-full btn-sm text-white px-4 ml-2'
-										onClick={() => updateProfile()}
+										onClick={async() => {
+											await updateProfile({coverImg, profileImg})
+											setProfileImg(null)
+											setCoverImg(null)
+										}}
 									>
 										{isUpdatingProfile ? "Updating..." : "Update"}
 									</button>
